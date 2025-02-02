@@ -19,4 +19,12 @@ public class MemberDAOtests {
 
         System.out.println(memberDAO.selectUserID("1"));
     }
+
+    @Test
+    public void getwithpasswordtests() throws Exception{
+
+        System.out.println(memberDAO.getWithPassword("1","abcd"));
+
+
+    }
 }
