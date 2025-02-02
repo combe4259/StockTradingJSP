@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'war'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group 'org.zerock'
@@ -14,8 +15,6 @@ ext {
     junitVersion = '5.11.0'
 }
 
-sourceCompatibility = '21'
-targetCompatibility = '21'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -42,8 +41,12 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.17.2'
 
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
     useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(21)
 }
