@@ -1,6 +1,8 @@
 package org.zerock.stocktrading.controller;
 
 import lombok.extern.log4j.Log4j2;
+import org.zerock.stocktrading.dto.MemberDTO;
+import org.zerock.stocktrading.service.MemberSerivce;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,6 +27,14 @@ public class LoginController extends HttpServlet {
 
         String user_id = req.getParameter("user_id");
         String password = req.getParameter("password");
+
+        try{
+             MemberDTO memberDTO = MemberSerivce.INSTANCE.login(user_id,password);
+             req.setAttribute("memberDTO",memberDTO);
+             req.getRequestDispatcher("/WEB-INF/main.jsp").forward(req, resp);
+        }catch (Exception e){
+            resp.sendRedirect("/login?result=error");
+        }
     }
 
 
