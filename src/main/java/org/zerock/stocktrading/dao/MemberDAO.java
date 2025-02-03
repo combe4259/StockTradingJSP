@@ -65,4 +65,20 @@ public class MemberDAO {
     }
 
 
+    //회원가입
+    public void insert(MemberVO vo) throws Exception{
+        String sql = "insert into tbl_member (user_id, password, username) values (?, ?, ?)";
+
+        @Cleanup Connection connection = ConnectionUtil.INSTANCE.getConnection();
+        @Cleanup PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+        preparedStatement.setString(1, vo.getUser_id());
+        preparedStatement.setString(2, vo.getPassword());
+        preparedStatement.setString(3, vo.getUsername());
+
+
+        preparedStatement.executeUpdate();
+    }
+
+
 }

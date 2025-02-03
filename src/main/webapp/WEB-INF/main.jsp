@@ -12,6 +12,9 @@
 </head>
 <body>
 <div>
+    <h1>MAIN화면입니다</h1>
+</div>
+<div>
     ${memberDTO}
 </div>
 </body>
