@@ -23,7 +23,7 @@ public class PsblOrderServlet extends HttpServlet {
         String accessToken = "";
         try {
             accessToken = TokenManager.getAccessToken();
-            System.out.println(accessToken);
+            log.info("발급된 액세스 토근:" + accessToken);
         } catch (IOException e) {
             response.getWriter().write("토큰 발급 실패: " + e.getMessage());
             return;
