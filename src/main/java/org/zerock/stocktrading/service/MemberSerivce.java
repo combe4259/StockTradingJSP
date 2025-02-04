@@ -25,6 +25,13 @@ public enum MemberSerivce {
 
     }
 
+    public void register(MemberDTO memberDTO) throws Exception{
+
+        MemberVO memberVO = modelMapper.map(memberDTO, MemberVO.class);
+        dao.insert(memberVO);
+
+    }
+
 
 
 }
