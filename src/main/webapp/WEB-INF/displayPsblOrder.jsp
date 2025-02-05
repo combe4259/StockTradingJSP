@@ -11,7 +11,7 @@
 <body>
 <h2>매수가능 조회 결과</h2>
 <pre>
-    ${psblOrderResult}
+    ${psblOrder}
 </pre>
 </body>
 </html>
