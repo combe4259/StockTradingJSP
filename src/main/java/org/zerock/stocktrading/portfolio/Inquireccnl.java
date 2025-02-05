@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 //주식 체결 내역(그 날 거래정보 내가 산게 아님)
-@WebServlet(urlPatterns = "/inquireccnl")
+@WebServlet(urlPatterns = "/Inquireccnl")
 public class Inquireccnl extends HttpServlet {
 
     @Override
@@ -27,7 +27,7 @@ public class Inquireccnl extends HttpServlet {
         try{
             String result = HttpClientUtil.sendGetRequest(endpoint, queryString, tr_id);
             req.setAttribute("inquireccnl", result);
-            req.getRequestDispatcher("WEB-INF/inquireccnl.jsp").forward(req,resp);
+            req.getRequestDispatcher("WEB-INF/Inquireccnl.jsp").forward(req,resp);
         }catch (Exception e){
             e.printStackTrace();
         }
