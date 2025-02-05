@@ -11,7 +11,7 @@
     <title>Title</title>
 </head>
 <body>
-${balance}
+${balanceData}
 <h1>하ㅣㅇ</h1>
 </body>
 </html>
