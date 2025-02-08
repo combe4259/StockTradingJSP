@@ -1,10 +1,9 @@
 package org.zerock.stocktrading.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.zerock.stocktrading.ConfigManager;
-import org.zerock.stocktrading.HttpClientUtil;
+import org.zerock.stocktrading.manager.ConfigManager;
+import org.zerock.stocktrading.util.HttpClientUtil;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,11 +105,9 @@ public class PortfolioService {
 
             try {
                 data.put("price", getPriceInquiry());
-                Thread.sleep(1000);
                 data.put("balance", getBalanceInquiry());
                 Thread.sleep(1000);
                 data.put("trades", getInquireCcnl());
-                Thread.sleep(1000);
                 data.put("order", getPsblOrder());
 
                 log.info("포트폴리오 데이터 조회 완료");

@@ -13,6 +13,7 @@ repositories {
 
 ext {
     junitVersion = '5.11.0'
+    tyrusVersion = '2.1.3'  // Tyrus 버전 추가
 }
 
 
@@ -50,6 +51,16 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+
+    implementation 'javax.websocket:javax.websocket-api:1.1'
+
+    // Tyrus 의존성 변경
+    implementation "org.glassfish.tyrus:tyrus-client:${tyrusVersion}"
+    implementation "org.glassfish.tyrus:tyrus-container-grizzly-client:${tyrusVersion}"
+    implementation "org.glassfish.tyrus:tyrus-core:${tyrusVersion}"
+    implementation "org.glassfish.tyrus:tyrus-spi:${tyrusVersion}"
+
+
 
 
 
