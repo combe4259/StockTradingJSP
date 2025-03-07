@@ -33,12 +33,9 @@ public class MemberDAOtests {
     }
 
     @Test
-    public void registertests() throws Exception {
-        // 현재 시간을 이용해 유니크한 ID 생성
-        String uniqueId = "test_" + System.currentTimeMillis();
-
+    public void registertests() throws Exception{
         MemberDTO memberDTO = MemberDTO.builder()
-                .user_id(uniqueId)
+                .user_id("1111")
                 .password("aaaa")
                 .username("Jun")
                 .build();

@@ -1,4 +1,4 @@
-package org.zerock.stocktrading.manager;
+package org.zerock.stocktrading;
 
 import java.io.IOException;
 import java.io.InputStream;

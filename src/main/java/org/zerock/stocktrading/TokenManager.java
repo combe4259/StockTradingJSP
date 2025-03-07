@@ -1,4 +1,4 @@
-package org.zerock.stocktrading.manager;
+package org.zerock.stocktrading;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +13,7 @@ public class TokenManager {
     private static final String appKey = ConfigManager.getProperty("appkey");
     private static final String appSecret = ConfigManager.getProperty("appsecret");
 
-    static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static String getAccessToken() throws IOException {
 
