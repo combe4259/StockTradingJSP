@@ -1,5 +1,6 @@
 package org.zerock.stocktrading.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.zerock.stocktrading.manager.ConfigManager;
 import org.zerock.stocktrading.manager.TokenManager;
@@ -9,10 +10,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
 public class HttpClientUtil {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static String sendGetRequest(String endpoint, String queryString, String tr_id) throws IOException {
         String accesstoken = ConfigManager.getProperty("accesstoken");
@@ -43,7 +47,6 @@ public class HttpClientUtil {
                 throw new IOException("Server returned HTTP response code: " + responseCode);
             }
 
-            // 정상 응답 처리
             StringBuilder responseStr = new StringBuilder();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
                 String line;
@@ -55,7 +58,7 @@ public class HttpClientUtil {
         } finally {
             if (conn != null) {
                 log.info("연결 해제");
-                conn.disconnect(); // ✅ 연결 해제
+                conn.disconnect();
             }
         }
     }

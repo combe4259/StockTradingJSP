@@ -52,6 +52,7 @@ dependencies {
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
+
     implementation 'javax.websocket:javax.websocket-api:1.1'
 
     // Tyrus 의존성 변경

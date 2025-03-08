@@ -2,12 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>종목코드 입력</title>
 </head>
 <body>
-<h1><%= "Hello World!" %>
-</h1>
-<br/>
-<a href="hello-servlet">Hello Servlet</a>
+<h2>종목코드 입력</h2>
+<form action="/portfolio" method="post">
+    <input type="text" name="stockCode" placeholder="종목코드 입력">
+    <button type="submit">조회</button>
+</form>
 </body>
 </html>
