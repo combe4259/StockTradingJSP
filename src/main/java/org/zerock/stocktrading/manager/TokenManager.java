@@ -65,7 +65,7 @@ public class TokenManager {
         log.info(responseStr);
 
         String response = responseStr.toString();
-        // 토큰 추출: 예시 코드 (문자열 파싱, 실제로는 JSON 파싱 라이브러리 권장)
+        // 토큰 추출:
 //        String token = response.split("\"access_token\"\\s*:\\s*\"")[1].split("\"")[0];
         JsonNode rootNode = objectMapper.readTree(response);
         String token = rootNode.path("access_token").asText();

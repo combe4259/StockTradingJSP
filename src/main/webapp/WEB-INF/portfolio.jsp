@@ -3,15 +3,20 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-    <!-- 스타일 부분은 동일하게 유지 -->
+    <title>포트폴리오 조회</title>
+    <style>
+        .card { margin: 20px; padding: 20px; border: 1px solid #ddd; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+    </style>
 </head>
 <body>
 <div class="container">
     <!-- 주가 정보 -->
     <div class="card">
-        <h2>📊 주가 정보</h2>
+        <h2>📈 주가 정보</h2>
         <table>
             <tr>
                 <th>현재가</th>
@@ -20,71 +25,62 @@
                 <th>거래량</th>
             </tr>
             <tr>
-                <td>${priceData.output.stck_prpr}</td>
-                <td>${priceData.output.prdy_vrss}</td>
-                <td>${priceData.output.prdy_ctrt}%</td>
-                <td>${priceData.output.acml_vol}</td>
-            </tr>
-        </table>
-    </div>
-    <!-- 잔고 정보 -->
-    <div class="card">
-        <h2>💰 잔고 정보</h2>
-        <table>
-            <tr>
-                <th>종목이름</th>
-                <th>보유수량</th>
-                <th>매입단가</th>
-                <th>평가금액</th>
-                <th>평가손익</th>
-            </tr>
-            <tr>
-                <td>${balanceData.output1[0].prdt_name}</td>
-                <td>${balanceData.output1[0].hldg_qty}</td>
-                <td>${balanceData.output1[0].pchs_avg_pric}</td>
-                <td>${balanceData.output1[0].evlu_amt}</td>
-                <td>${balanceData.output1[0].evlu_pfls_amt}</td>
+                <td><fmt:formatNumber value="${priceData.stck_prpr}" pattern="#,###"/></td>
+                <td>
+                    <c:choose>
+                        <c:when test="${priceData.prdy_vrss_sign == '2'}">▲</c:when>
+                        <c:when test="${priceData.prdy_vrss_sign == '5'}">▼</c:when>
+                        <c:otherwise>-</c:otherwise>
+                    </c:choose>
+                    <fmt:formatNumber value="${priceData.prdy_vrss}" pattern="#,###"/>
+                </td>
+                <td>${priceData.prdy_ctrt}%</td>
+                <td><fmt:formatNumber value="${priceData.acml_vol}" pattern="#,###"/></td>
             </tr>
         </table>
     </div>
 
-    <!-- 체결 내역 -->
+    <!-- 주식 보유 정보 -->
     <div class="card">
-        <h2>📈 체결 내역</h2>
+        <h2>📦 보유 종목</h2>
         <table>
             <tr>
-                <th>체결시간</th>
-                <th>체결가</th>
-                <th>전일대비</th>
-                <th>체결량</th>
+                <th>종목명</th>
+                <th>보유수량</th>
+                <th>평균매입가</th>
+                <th>평가금액</th>
+                <th>평가손익</th>
             </tr>
-            <c:forEach var="trade" items="${tradesData.output}" varStatus="status">
-                <c:if test="${status.index < 10}">
-                    <tr>
-                        <td>${trade.stck_cntg_hour}</td>
-                        <td>${trade.stck_prpr}</td>
-                        <td>${trade.prdy_vrss}</td>
-                        <td>${trade.cntg_vol}</td>
-                    </tr>
-                </c:if>
+            <c:forEach var="item" items="${output1}">
+                <tr>
+                    <td>${item.prdt_name}</td>
+                    <td><fmt:formatNumber value="${item.hldg_qty}" pattern="#,###"/></td>
+                    <td><fmt:formatNumber value="${item.pchs_avg_pric}" pattern="#,###.0000"/></td>
+                    <td><fmt:formatNumber value="${item.evlu_amt}" pattern="#,###"/></td>
+                    <td class="${item.evlu_pfls_amt >= 0 ? 'positive' : 'negative'}">
+                        <fmt:formatNumber value="${item.evlu_pfls_amt}" pattern="#,###"/>
+                    </td>
+                </tr>
             </c:forEach>
         </table>
     </div>
 
-    <!-- 주문 가능 정보 -->
+    <!-- 계좌 잔고 정보 -->
     <div class="card">
-        <h2>📝 주문 가능 정보</h2>
+        <h2>💰 계좌 현황</h2>
         <table>
             <tr>
-                <th>주문가능현금</th>
-                <th>최대매수금액</th>
-                <th>최대매수수량</th>
+                <th>총 평가자산</th>
+                <th>예수금</th>
+                <th>총 자산</th>
             </tr>
-            <tr>
-                <td>${orderData.output.ord_psbl_cash}</td>
-                <td>${orderData.output.max_buy_amt}</td>
-                <td>${orderData.output.max_buy_qty}</td>
-            </tr>
+            <c:forEach var="balance" items="${output2}">
+                <tr>
+                    <td><fmt:formatNumber value="${balance.tot_evlu_amt}" pattern="#,###"/></td>
+                    <td><fmt:formatNumber value="${balance.dnca_tot_amt}" pattern="#,###"/></td>
+                    <td><fmt:formatNumber value="${balance.nass_amt}" pattern="#,###"/></td>
+                </tr>
+            </c:forEach>
         </table>
     </div>
 </div>

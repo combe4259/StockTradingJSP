@@ -61,6 +61,9 @@ dependencies {
     implementation "org.glassfish.tyrus:tyrus-core:${tyrusVersion}"
     implementation "org.glassfish.tyrus:tyrus-spi:${tyrusVersion}"
 
+    implementation 'io.github.resilience4j:resilience4j-ratelimiter:1.7.1'
+    implementation 'io.github.resilience4j:resilience4j-core:1.7.1'
+
 
 
 
