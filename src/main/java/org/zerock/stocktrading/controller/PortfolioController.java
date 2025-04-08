@@ -79,13 +79,11 @@ public class PortfolioController extends HttpServlet {
 
     private void processDataAndDispatch(AsyncContext ctx, Map<String, Object> data) {
         try {
-            // 1. DTO 추출
             InquirePriceDTO priceData = (InquirePriceDTO) data.get("price");
             BalanceDTO balanceData = (BalanceDTO) data.get("balance");
             InquireCcnlDTO tradesData = (InquireCcnlDTO) data.get("trades");
             PsblOrderDTO orderData = (PsblOrderDTO) data.get("order");
 
-            // 2. JSP로 전달
             HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
             req.setAttribute("priceData", priceData.getOutput()); // 주가 정보
             req.setAttribute("balanceData", balanceData.getOutput1()); // 잔고 정보
@@ -101,9 +99,3 @@ public class PortfolioController extends HttpServlet {
     }
 
 }
-
-
-
-
-//주식 잔고 조회 ok
-//주식 현재가 Ok
