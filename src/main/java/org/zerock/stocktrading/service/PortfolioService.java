@@ -30,9 +30,6 @@ public class PortfolioService {
 
     private final String domain;
 
-    // 후속 API 호출 타이밍 조절을 위한 스케줄러 (재사용)
-    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
     public PortfolioService() {
         this.domain = ConfigManager.getProperty("domain.mock");
         if (this.domain == null) {
@@ -159,7 +156,7 @@ public class PortfolioService {
         }
     }
 
-    // 개선된 getPortfolioData() - 후속 호출을 ScheduledExecutorService를 통해 지연 실행
+
     public CompletableFuture<Map<String, Object>> getPortfolioData(String stockCode) {
         CompletableFuture<InquirePriceDTO> priceFuture = CompletableFuture.supplyAsync(() -> {
             try {
