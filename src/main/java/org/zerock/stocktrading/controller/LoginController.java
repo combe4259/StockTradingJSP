@@ -24,7 +24,6 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
         log.info("login post....");
-
         String user_id = req.getParameter("user_id");
         String password = req.getParameter("password");
 

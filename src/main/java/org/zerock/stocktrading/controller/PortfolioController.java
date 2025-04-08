@@ -3,6 +3,10 @@ package org.zerock.stocktrading.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.log4j.Log4j2;
+import org.zerock.stocktrading.dto.BalanceDTO;
+import org.zerock.stocktrading.dto.InquireCcnlDTO;
+import org.zerock.stocktrading.dto.InquirePriceDTO;
+import org.zerock.stocktrading.dto.PsblOrderDTO;
 import org.zerock.stocktrading.service.PortfolioService;
 
 import javax.servlet.AsyncContext;
@@ -73,37 +77,29 @@ public class PortfolioController extends HttpServlet {
         }
     }
 
-    private void processDataAndDispatch(AsyncContext ctx, Map<String, String> data) {
+    private void processDataAndDispatch(AsyncContext ctx, Map<String, Object> data) {
         try {
-            // 1. 주가 데이터 파싱 (output이 단일 객체)
-            Map<String, Object> priceData = objectMapper.readValue(data.get("price"), Map.class);
-            Map<String, Object> priceOutput = (Map<String, Object>) priceData.get("output");
+            // 1. DTO 추출
+            InquirePriceDTO priceData = (InquirePriceDTO) data.get("price");
+            BalanceDTO balanceData = (BalanceDTO) data.get("balance");
+            InquireCcnlDTO tradesData = (InquireCcnlDTO) data.get("trades");
+            PsblOrderDTO orderData = (PsblOrderDTO) data.get("order");
 
-            // 2. 잔고 데이터 파싱 (output1, output2는 리스트)
-            Map<String, Object> balanceData = objectMapper.readValue(data.get("balance"), Map.class);
-            List<Map<String, Object>> output1 = (List<Map<String, Object>>) balanceData.get("output1");
-            List<Map<String, Object>> output2 = (List<Map<String, Object>>) balanceData.get("output2");
-
-//            // 3. 체결 데이터 파싱 (output은 리스트)
-//            Map<String, Object> tradesData = objectMapper.readValue(data.get("trades"), Map.class);
-//            List<Map<String, Object>> tradesOutput = (List<Map<String, Object>>) tradesData.get("output");
-
-
-            // JSP로 전달
+            // 2. JSP로 전달
             HttpServletRequest req = (HttpServletRequest) ctx.getRequest();
-            req.setAttribute("priceData", priceOutput); // 주가 정보
-            req.setAttribute("output1", output1); // 보유 종목
-            req.setAttribute("output2", output2); // 계좌 잔고
-//            req.setAttribute("tradesData", tradesOutput); // 체결 내역
+            req.setAttribute("priceData", priceData.getOutput()); // 주가 정보
+            req.setAttribute("balanceData", balanceData.getOutput1()); // 잔고 정보
+            req.setAttribute("tradesData", tradesData.getOutput()); // 체결 내역
+            req.setAttribute("orderData", orderData.getOutput()); // 주문 가능 정보
 
 
             ctx.dispatch("/WEB-INF/portfolio.jsp");
-
         } catch (Exception e) {
-            log.error("Data parsing error", e);
-            sendErrorResponse(ctx, 500, "데이터 파싱 실패: " + e.getMessage());
+            log.error("Data 처리 오류", e);
+            sendErrorResponse(ctx, 500, "데이터 처리 실패: " + e.getMessage());
         }
     }
+
 }
 
 

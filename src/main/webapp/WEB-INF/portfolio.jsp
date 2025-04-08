@@ -1,88 +1,137 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
-<!DOCTYPE html>
 <html>
 <head>
-    <title>포트폴리오 조회</title>
+    <title>포트폴리오 정보</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <style>
-        .card { margin: 20px; padding: 20px; border: 1px solid #ddd; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f5f7fa;
+            padding: 40px;
+            color: #333;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            background-color: #fff;
+            padding: 25px 30px;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 18px;
+            border: 1px solid #e1e4e8;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        th {
+            background-color: #f0f3f7;
+            color: #2c3e50;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9fbfd;
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .half {
+            flex: 1 1 45%;
+        }
+
+        .full {
+            flex: 1 1 100%;
+        }
+
+        @media (max-width: 768px) {
+            .half {
+                flex: 1 1 100%;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <!-- 주가 정보 -->
-    <div class="card">
-        <h2>📈 주가 정보</h2>
-        <table>
-            <tr>
-                <th>현재가</th>
-                <th>전일대비</th>
-                <th>등락률</th>
-                <th>거래량</th>
-            </tr>
-            <tr>
-                <td><fmt:formatNumber value="${priceData.stck_prpr}" pattern="#,###"/></td>
-                <td>
-                    <c:choose>
-                        <c:when test="${priceData.prdy_vrss_sign == '2'}">▲</c:when>
-                        <c:when test="${priceData.prdy_vrss_sign == '5'}">▼</c:when>
-                        <c:otherwise>-</c:otherwise>
-                    </c:choose>
-                    <fmt:formatNumber value="${priceData.prdy_vrss}" pattern="#,###"/>
-                </td>
-                <td>${priceData.prdy_ctrt}%</td>
-                <td><fmt:formatNumber value="${priceData.acml_vol}" pattern="#,###"/></td>
-            </tr>
-        </table>
-    </div>
 
-    <!-- 주식 보유 정보 -->
-    <div class="card">
-        <h2>📦 보유 종목</h2>
-        <table>
-            <tr>
-                <th>종목명</th>
-                <th>보유수량</th>
-                <th>평균매입가</th>
-                <th>평가금액</th>
-                <th>평가손익</th>
-            </tr>
-            <c:forEach var="item" items="${output1}">
-                <tr>
-                    <td>${item.prdt_name}</td>
-                    <td><fmt:formatNumber value="${item.hldg_qty}" pattern="#,###"/></td>
-                    <td><fmt:formatNumber value="${item.pchs_avg_pric}" pattern="#,###.0000"/></td>
-                    <td><fmt:formatNumber value="${item.evlu_amt}" pattern="#,###"/></td>
-                    <td class="${item.evlu_pfls_amt >= 0 ? 'positive' : 'negative'}">
-                        <fmt:formatNumber value="${item.evlu_pfls_amt}" pattern="#,###"/>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
-    </div>
-
-    <!-- 계좌 잔고 정보 -->
-    <div class="card">
-        <h2>💰 계좌 현황</h2>
-        <table>
-            <tr>
-                <th>총 평가자산</th>
-                <th>예수금</th>
-                <th>총 자산</th>
-            </tr>
-            <c:forEach var="balance" items="${output2}">
-                <tr>
-                    <td><fmt:formatNumber value="${balance.tot_evlu_amt}" pattern="#,###"/></td>
-                    <td><fmt:formatNumber value="${balance.dnca_tot_amt}" pattern="#,###"/></td>
-                    <td><fmt:formatNumber value="${balance.nass_amt}" pattern="#,###"/></td>
-                </tr>
-            </c:forEach>
-        </table>
-    </div>
+<div class="section">
+    <h2>📈 주식 현재가 정보</h2>
+    <table>
+        <tr><th>현재가</th><td>${priceData.stck_prpr}</td></tr>
+        <tr><th>전일대비</th><td>${priceData.prdy_vrss}</td></tr>
+        <tr><th>전일대비율</th><td>${priceData.prdy_ctrt}</td></tr>
+        <tr><th>시가</th><td>${priceData.stck_oprc}</td></tr>
+        <tr><th>고가</th><td>${priceData.stck_hgpr}</td></tr>
+        <tr><th>저가</th><td>${priceData.stck_lwpr}</td></tr>
+    </table>
 </div>
+
+<div class="section">
+    <h2>💰 보유 잔고 정보</h2>
+    <c:forEach var="item" items="${balanceData}">
+        <table>
+            <tr><th>상품명</th><td>${item.prdt_name}</td></tr>
+            <tr><th>보유수량</th><td>${item.hldg_qty}</td></tr>
+            <tr><th>주문가능수량</th><td>${item.ord_psbl_qty}</td></tr>
+            <tr><th>매입평균가</th><td>${item.pchs_avg_pric}</td></tr>
+            <tr><th>현재가</th><td>${item.prpr}</td></tr>
+            <tr><th>평가손익</th><td>${item.evlu_pfls_amt}</td></tr>
+            <tr><th>수익률</th><td>${item.evlu_pfls_rt}%</td></tr>
+        </table>
+    </c:forEach>
+</div>
+
+<div class="section">
+    <h2>🧾 체결 내역</h2>
+    <table>
+        <tr>
+            <th>체결시간</th>
+            <th>체결가</th>
+            <th>체결량</th>
+            <th>체결강도</th>
+        </tr>
+        <c:forEach var="trade" items="${tradesData}">
+            <tr>
+                <td>${trade.stck_cntg_hour}</td>
+                <td>${trade.stck_prpr}</td>
+                <td>${trade.cntg_vol}</td>
+                <td>${trade.tday_rltv}</td>
+            </tr>
+        </c:forEach>
+    </table>
+</div>
+
+<div class="section">
+    <h2>📝 주문 가능 정보</h2>
+    <table>
+        <tr>
+            <th>주문가능현금</th>
+            <th>최대매수금액</th>
+            <th>최대매수수량</th>
+        </tr>
+        <tr>
+            <td>${orderData.ord_psbl_cash}</td>
+            <td>${orderData.max_buy_amt}</td>
+            <td>${orderData.max_buy_qty}</td>
+        </tr>
+    </table>
+</div>
+
 </body>
 </html>

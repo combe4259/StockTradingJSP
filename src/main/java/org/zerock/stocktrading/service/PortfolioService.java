@@ -1,8 +1,14 @@
 package org.zerock.stocktrading.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
+import org.zerock.stocktrading.dto.BalanceDTO;
+import org.zerock.stocktrading.dto.InquireCcnlDTO;
+import org.zerock.stocktrading.dto.InquirePriceDTO;
+import org.zerock.stocktrading.dto.PsblOrderDTO;
 import org.zerock.stocktrading.manager.ConfigManager;
 import org.zerock.stocktrading.util.HttpClientUtil;
 import org.zerock.stocktrading.util.QueryStringBuilder;
@@ -16,6 +22,7 @@ import java.util.concurrent.*;
 @Log4j2
 public class PortfolioService {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final RateLimiter rateLimiter = RateLimiterConfigFactory.create();
     // 추후 계좌 동적으로 처리해야 함
     private static final String ACCOUNT_NUMBER = "50124248";
@@ -34,7 +41,7 @@ public class PortfolioService {
     }
 
     // 잔고조회
-    public String getBalanceInquiry() throws Exception {
+    public BalanceDTO getBalanceInquiry() throws Exception {
         try {
             return RateLimiter.decorateSupplier(rateLimiter, () -> {
                 try {
@@ -55,7 +62,8 @@ public class PortfolioService {
                     String tr_id = "VTTC8434R";
                     log.info("잔고조회 시작: {}", endpoint);
 
-                    String response = HttpClientUtil.sendGetRequest(endpoint, queryString, tr_id);
+                    String responseJson = HttpClientUtil.sendGetRequest(endpoint, queryString, tr_id);
+                    BalanceDTO response = objectMapper.readValue(responseJson, BalanceDTO.class);
                     return response;
                 } catch (Exception e) {
                     log.error("잔고조회 실패", e);
@@ -69,7 +77,7 @@ public class PortfolioService {
     }
 
     // 주식현재가 체결
-    public String getInquireCcnl(String stockCode) throws Exception {
+    public InquireCcnlDTO getInquireCcnl(String stockCode) throws Exception {
         try {
             return RateLimiter.decorateSupplier(rateLimiter, () -> {
                 try {
@@ -78,8 +86,9 @@ public class PortfolioService {
                             .addParam("fid_cond_mrkt_div_code", "J")
                             .addParam("fid_input_iscd", stockCode)
                             .build();
-                    String response = HttpClientUtil.sendGetRequest(endpoint, queryString, "FHKST01010100");
-                    log.debug("주식 현재가 조회 응답: {}", response);
+                    String responseJson = HttpClientUtil.sendGetRequest(endpoint, queryString, "FHKST01010300");
+                    log.info("주식 현재가 조회 응답: {}", responseJson);
+                    InquireCcnlDTO response = objectMapper.readValue(responseJson, InquireCcnlDTO.class);
                     return response;
                 } catch (Exception e) {
                     log.error("주식 현재가 조회 실패: {}", e.getMessage());
@@ -93,7 +102,7 @@ public class PortfolioService {
     }
 
     // 주식현재가 조회
-    public String getPriceInquiry(String stockCode) throws Exception {
+    public InquirePriceDTO getPriceInquiry(String stockCode) throws Exception {
         try {
             return RateLimiter.decorateSupplier(rateLimiter, () -> {
                 try {
@@ -102,8 +111,9 @@ public class PortfolioService {
                             .addParam("fid_cond_mrkt_div_code", "J")
                             .addParam("fid_input_iscd", stockCode)
                             .build();
-                    String response = HttpClientUtil.sendGetRequest(endpoint, queryString, "FHKST01010100");
-                    log.debug("현재가 체결 조회 응답: {}", response);
+                    String responseJson = HttpClientUtil.sendGetRequest(endpoint, queryString, "FHKST01010100");
+                    log.debug("현재가 체결 조회 응답: {}", responseJson);
+                    InquirePriceDTO response = objectMapper.readValue(responseJson, InquirePriceDTO.class);
                     return response;
                 } catch (Exception e) {
                     log.error("현재가 체결 조회 실패: {}", e.getMessage());
@@ -117,7 +127,7 @@ public class PortfolioService {
     }
 
     // 매수가능 조회
-    public String getPsblOrder(String stockCode) throws Exception {
+    public PsblOrderDTO getPsblOrder(String stockCode) throws Exception {
         try {
             return RateLimiter.decorateSupplier(rateLimiter, () -> {
                 try {
@@ -134,8 +144,9 @@ public class PortfolioService {
                     String tr_id = "VTTC8908R";
 
                     log.info("매수가능 조회 시작");
-                    String response = HttpClientUtil.sendGetRequest(endpoint, queryString, tr_id);
-                    log.debug("매수 가능 조회 응답: {}", response);
+                    String responseJson = HttpClientUtil.sendGetRequest(endpoint, queryString, tr_id);
+                    log.debug("매수 가능 조회 응답: {}", responseJson);
+                    PsblOrderDTO response = objectMapper.readValue(responseJson, PsblOrderDTO.class);
                     return response;
                 } catch (IOException e) {
                     log.error("매수 가능 조회 실패: {}", e.getMessage());
@@ -149,34 +160,36 @@ public class PortfolioService {
     }
 
     // 개선된 getPortfolioData() - 후속 호출을 ScheduledExecutorService를 통해 지연 실행
-    public CompletableFuture<Map<String, String>> getPortfolioData(String stockCode) {
-        CompletableFuture<String> priceFuture = CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<Map<String, Object>> getPortfolioData(String stockCode) {
+        CompletableFuture<InquirePriceDTO> priceFuture = CompletableFuture.supplyAsync(() -> {
             try {
+                log.info("성공 1");
                 return getPriceInquiry(stockCode);
             } catch (Exception e) {
                 throw new CompletionException(e);
             }
         });
 
-        CompletableFuture<String> balanceFuture = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<BalanceDTO> balanceFuture = CompletableFuture.supplyAsync(() -> {
             try {
+                log.info("성공 2");
                 return getBalanceInquiry();
             } catch (Exception e) {
                 throw new CompletionException(e);
             }
         });
 
-        CompletableFuture<Map<String, String>> initialData = priceFuture.thenCombine(balanceFuture, (price, balance) -> {
-            Map<String, String> data = new HashMap<>();
+        return priceFuture.thenCombine(balanceFuture, (price, balance) -> {
+            Map<String, Object> data = new HashMap<>();
             data.put("price", price);
             data.put("balance", balance);
             return data;
-        });
-
-        return initialData.thenCompose(data -> CompletableFuture.supplyAsync(() -> {
+        }).thenCompose(data -> CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(1000); // 1초 지연
+                log.info("성공 3");
                 data.put("trades", getInquireCcnl(stockCode));
+                log.info("성공 4");
                 data.put("order", getPsblOrder(stockCode));
                 return data;
             } catch (Exception e) {
@@ -184,5 +197,6 @@ public class PortfolioService {
             }
         }));
     }
+
 
 }
